@@ -9,7 +9,7 @@ from app.middlewares.exception_handler import ExceptionHandlingMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 
 
-def create_app():
+def create_app(*args):
     # Database 연결 생성
     db_conn.init_db(db_url=settings.DB_URL, echo=settings.DB_ECHO)
 
