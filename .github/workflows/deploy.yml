@@ -1,0 +1,38 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때 작동
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # 최신 Ubuntu 환경에서 실행
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2  # 현재 레포지토리 체크아웃
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'  # 사용 중인 Python 버전
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Zip application
+      run: zip -r fastapi-app.zip .  # 애플리케이션 폴더 전체를 zip 파일로 압축
+
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v18
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS 접근 키
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS 비밀 키
+        application_name: "fastter"      # EB 애플리케이션 이름
+        environment_name: "Fastter-env"  # EB 환경 이름
+        region: "ap-northeast-2"  # AWS 리전 (예: ap-northeast-2)
+        version_label: "fastapi-app-${{ github.run_number }}"  # 버전 라벨
+        zip_file: "fastapi-app.zip"  # 배포할 zip 파일
+        wait_for_deployment: true  # 배포 완료까지 기다림
