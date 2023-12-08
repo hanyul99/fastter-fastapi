@@ -25,6 +25,7 @@ jobs:
     - name: Zip application
       run: zip -r fastapi-app.zip .  # 애플리케이션 폴더 전체를 zip 파일로 압축
 
+
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v18
       with:
